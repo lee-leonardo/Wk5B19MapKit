@@ -16,6 +16,7 @@
 		384E399E19A6F2D400E357D0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384E399D19A6F2D400E357D0 /* CoreData.framework */; };
 		384E39A019A6F2DB00E357D0 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384E399F19A6F2DB00E357D0 /* MapKit.framework */; };
 		384E39A219A6F4BA00E357D0 /* RemindersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384E39A119A6F4BA00E357D0 /* RemindersViewController.swift */; };
+		384E39AE19A7A9D200E357D0 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384E39AD19A7A9D200E357D0 /* Reminder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		384E399D19A6F2D400E357D0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		384E399F19A6F2DB00E357D0 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		384E39A119A6F4BA00E357D0 /* RemindersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemindersViewController.swift; sourceTree = "<group>"; };
+		384E39AD19A7A9D200E357D0 /* Reminder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			children = (
 				384E399A19A6F23A00E357D0 /* Wk5B19MapKit-Bridging-Header.h */,
 				384E397919A6F19F00E357D0 /* Wk5B19MapKit.xcdatamodeld */,
+				384E39AD19A7A9D200E357D0 /* Reminder.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				384E397B19A6F19F00E357D0 /* Wk5B19MapKit.xcdatamodeld in Sources */,
 				384E397819A6F19F00E357D0 /* AppDelegate.swift in Sources */,
 				384E39A219A6F4BA00E357D0 /* RemindersViewController.swift in Sources */,
+				384E39AE19A7A9D200E357D0 /* Reminder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,7 +20,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	var locationManager = CLLocationManager()
 	var reminderContext : NSManagedObjectContext!
 	var reminderFetchResults : NSFetchedResultsController!
-	var reminders = [Wk5B19MapKit]()
+	var reminders = [Reminder]()
 	
 	
 //MARK: - View methods
@@ -69,7 +69,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		
 	}
 	func addReminder(coordinate : CLLocationCoordinate2D) {
-		var reminder = NSEntityDescription.insertNewObjectForEntityForName("Reminder", inManagedObjectContext: self.reminderContext) as Wk5B19MapKitReminder
+		var reminder = NSEntityDescription.insertNewObjectForEntityForName("Reminder", inManagedObjectContext: self.reminderContext) as Reminder
 		reminder.latitude = coordinate.latitude
 		reminder.longitude = coordinate.longitude
 		reminder.message = "No message yet"

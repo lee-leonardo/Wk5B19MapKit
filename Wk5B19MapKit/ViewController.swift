@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import MapKit
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var latitudeTextField: UITextField!
@@ -38,6 +38,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		//LongGesture
 		var longPress = UILongPressGestureRecognizer(target: self, action: "mapPressed:")
 		self.mapView.addGestureRecognizer(longPress)
+
 	}
 	override func viewDidAppear(animated: Bool) {
 		self.locationManager.startUpdatingLocation()
@@ -66,6 +67,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		request.sortDescriptors = [sort]
 		//request.fetchBatchSize = 20
 		
+		self.reminderFetchResults = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.reminderContext, sectionNameKeyPath: nil, cacheName: nil)
+		self.reminderFetchResults.delegate = self
+		
 		
 	}
 	func addReminder(coordinate : CLLocationCoordinate2D) {
@@ -79,7 +83,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		if error != nil {
 			println(error?.localizedDescription)
 		}
-		println(reminder)
+		
+		println(reminder.message)
 	}
 
 //MARK: - Pin Methods
@@ -105,7 +110,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 			pinLocation(pin)
 			
 		default:
-			println("Anything else")
+			println("Not began state")
 		}
 	}
 	func pinLocation(annotation: MKPointAnnotation) {
@@ -146,15 +151,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 //MARK: MKMapViewDelegate
-	func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
-		var annotation = view.annotation
-		annotation.coordinate
-		
-		
-		
-	}
-//	func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+	func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
 	//refactor into a subroutine.
+		
+		if let selectedAnnotation = annotation as? MKUserLocation {
+			return nil
+		}
 	//		var annotationView = MKAnnotationView()
 	//		if let annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin") as? MKPinAnnotationView {
 	//
@@ -173,7 +175,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	//		annotationView.rightCalloutAccessoryView = rButton
 	
 	//		return annotationView
-//	}
+		
+		return nil
+	}
+	
+	//For the accessories on the pins.
+	func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+		//		var annotation = view.annotation
+		//		annotation.coordinate
+		
+		
+	}
 
 }
 

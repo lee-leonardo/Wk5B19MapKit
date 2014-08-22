@@ -16,8 +16,16 @@ class RemindersViewController: UIViewController, UITableViewDataSource {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		if self.reminderFetchResults != nil {
+			println("Awesome everythings working!")
+		} else {
+			println(self.reminderFetchResults)
+		}
+	}
 	
 //MARK: - TableView
 	func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6220.8" systemVersion="13E28" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Reminder" representedClassName="Wk5B19MapKitReminder" syncable="YES">
+    <entity name="Reminder" representedClassName="Wk5B19MapKit.Reminder" syncable="YES">
         <attribute name="latitude" attributeType="Double" minValueString="0" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>

@@ -20,7 +20,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	var locationManager = CLLocationManager()
 	var reminderContext : NSManagedObjectContext!
 	var reminderFetchResults : NSFetchedResultsController!
-	var reminders = [Wk5B19MapKitReminder]()
+	var reminders = [Wk5B19MapKit]()
 	
 	
 //MARK: - View methods
@@ -134,6 +134,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
 		println("Did enter")
+		
+		//Put a local notification here.
+		//var notification = UILocalNotification()
+		//notification.alertBody = "Entered a region!"
+		//notification.alertAction = ""
+		
 	}
 	func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
 		println("Did leave")
@@ -148,7 +154,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		
 	}
 //	func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
-//		<#code#>
+	//refactor into a subroutine.
+	//		var annotationView = MKAnnotationView()
+	//		if let annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin") as? MKPinAnnotationView {
+	//
+	//		} else {
+	//
+	//		}
+	//
+	//		if annotationView == nil {
+	//			annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "Pin") //ReuseID set here not on SB
+	//
+	//		}
+	//		annotationView.animatesDrop = true
+	//		annotationView.canShowCallout = true
+	
+	//		var rButton = UIButton.buttonWithType(UIButtonType.ContactAdd) as UIButton
+	//		annotationView.rightCalloutAccessoryView = rButton
+	
+	//		return annotationView
 //	}
 
 }

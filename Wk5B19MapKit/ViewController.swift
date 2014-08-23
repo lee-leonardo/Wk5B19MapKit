@@ -10,18 +10,17 @@ import UIKit
 import CoreData
 import MapKit
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, NSFetchedResultsControllerDelegate, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIGestureRecognizerDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var latitudeTextField: UITextField!
 	@IBOutlet weak var longitudeTextField: UITextField!
 	
 	//CoreData
-	var locationManager = CLLocationManager()
 	var reminderContext : NSManagedObjectContext!
-	var reminderFetchResults : NSFetchedResultsController!
+
+	var locationManager = CLLocationManager()
 	var reminders = [Reminder]()
-	
 	
 //MARK: - View methods
 	override func viewDidLoad() {
@@ -30,10 +29,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		self.locationManager.delegate = self
 		self.mapView.delegate = self
 		
-		//Setup CoreData
+		//Context setup
 		var appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
 		self.reminderContext = appDelegate.managedObjectContext
-		self.setupCoreData()
+		
+		
+		//To execute a fetchRequest.
+		//var fetch = NSFetchRequest(entityName: "Reminder")
+		//var reminders = self.reminderContext.executeFetchRequest(fetch, error: nil)
 		
 		//LongGesture
 		var longPress = UILongPressGestureRecognizer(target: self, action: "mapPressed:")
@@ -56,27 +59,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
 		if segue.identifier == "ShowReminders" {
 			let destination = segue.destinationViewController as RemindersViewController
-			destination.reminderFetchResults = self.reminderFetchResults
+			destination.reminderContext = self.reminderContext
 		}
 	}
 	
 //MARK: - CoreData
-	func setupCoreData() {
-		var request = NSFetchRequest(entityName: "Reminder")
-		var sort = NSSortDescriptor(key: "message", ascending: true)
-		request.sortDescriptors = [sort]
-		//request.fetchBatchSize = 20
-		
-		self.reminderFetchResults = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.reminderContext, sectionNameKeyPath: nil, cacheName: nil)
-		self.reminderFetchResults.delegate = self
-		
-		
-	}
+
 	func addReminder(coordinate : CLLocationCoordinate2D) {
 		var reminder = NSEntityDescription.insertNewObjectForEntityForName("Reminder", inManagedObjectContext: self.reminderContext) as Reminder
 		reminder.latitude = coordinate.latitude
 		reminder.longitude = coordinate.longitude
 		reminder.message = "No message yet"
+		
+		println(reminder)
 		
 		var error : NSError?
 		self.reminderContext.save(&error)
@@ -84,7 +79,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 			println(error?.localizedDescription)
 		}
 		
-		println(reminder.message)
+		//println(reminder.message)
 	}
 
 //MARK: - Pin Methods
@@ -151,12 +146,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 //MARK: MKMapViewDelegate
-	func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+	//func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
 	//refactor into a subroutine.
 		
-		if let selectedAnnotation = annotation as? MKUserLocation {
-			return nil
-		}
+	//	if let selectedAnnotation = annotation as? MKUserLocation {
+	//		return nil
+	//	}
 	//		var annotationView = MKAnnotationView()
 	//		if let annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin") as? MKPinAnnotationView {
 	//
@@ -176,16 +171,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	
 	//		return annotationView
 		
-		return nil
-	}
+	//	return nil
+	//}
 	
 	//For the accessories on the pins.
-	func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+	//func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
 		//		var annotation = view.annotation
 		//		annotation.coordinate
 		
 		
-	}
+	//}
 
 }
-

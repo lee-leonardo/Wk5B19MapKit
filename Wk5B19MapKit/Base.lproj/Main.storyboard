@@ -106,20 +106,45 @@
                                     <outlet property="delegate" destination="N41-qq-xWX" id="xky-Zr-xGZ"/>
                                 </connections>
                             </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ntv-kL-iIq">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="yaf-m6-Rmj"/>
+                                    <barButtonItem systemItem="organize" id="VGE-9U-cfd">
+                                        <connections>
+                                            <action selector="resortReminders:" destination="N41-qq-xWX" id="woE-No-Vh5"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="ztn-0V-fLs"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="oP8-oo-t8W" secondAttribute="trailing" id="8xD-Ca-JPl"/>
                             <constraint firstItem="oP8-oo-t8W" firstAttribute="leading" secondItem="8vC-oM-xE8" secondAttribute="leading" id="IF1-Ax-LSf"/>
+                            <constraint firstItem="Ntv-kL-iIq" firstAttribute="leading" secondItem="8vC-oM-xE8" secondAttribute="leading" id="NtI-gw-IWm"/>
                             <constraint firstItem="GRP-uv-1Pi" firstAttribute="top" secondItem="oP8-oo-t8W" secondAttribute="bottom" id="f6U-GA-tW3"/>
+                            <constraint firstItem="GRP-uv-1Pi" firstAttribute="top" secondItem="Ntv-kL-iIq" secondAttribute="bottom" id="gsw-ZP-d9A"/>
                             <constraint firstItem="oP8-oo-t8W" firstAttribute="top" secondItem="8vC-oM-xE8" secondAttribute="top" id="hxv-gl-eQD"/>
+                            <constraint firstAttribute="centerX" secondItem="Ntv-kL-iIq" secondAttribute="centerX" id="nHo-jW-CPo"/>
+                            <constraint firstAttribute="trailing" secondItem="Ntv-kL-iIq" secondAttribute="trailing" id="nsO-XS-4pJ"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="reminderTableView" destination="oP8-oo-t8W" id="UfJ-Eu-zBS"/>
+                        <outlet property="searchDisplayController" destination="uTS-a4-L3I" id="27t-Sc-Lyl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vMV-Ep-X7a" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="uTS-a4-L3I">
+                    <connections>
+                        <outlet property="delegate" destination="N41-qq-xWX" id="yug-ZS-i90"/>
+                        <outlet property="searchContentsController" destination="N41-qq-xWX" id="UZx-xr-exD"/>
+                        <outlet property="searchResultsDataSource" destination="N41-qq-xWX" id="RNj-G2-7gC"/>
+                        <outlet property="searchResultsDelegate" destination="N41-qq-xWX" id="NpM-Q4-92o"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1759" y="1068"/>
         </scene>

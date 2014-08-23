@@ -15,6 +15,7 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 	
 	var reminderContext : NSManagedObjectContext!
 	var reminderFetchResults : NSFetchedResultsController!
+	var sortKey : String!
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,15 +38,61 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 	}
 //MARK: Core Data
 	func setupCoreData() {
+		self.sortKey = "message"
+		requestReminders()
+		
+	}
+	func requestReminders() {
 		var request = NSFetchRequest(entityName: "Reminder")
-		var sort = NSSortDescriptor(key: "message", ascending: true)
+		var sort = NSSortDescriptor(key: self.sortKey, ascending: true)
 		request.sortDescriptors = [sort]
 		//request.fetchBatchSize = 20
 		
 		self.reminderFetchResults = NSFetchedResultsController(fetchRequest: request, managedObjectContext: self.reminderContext, sectionNameKeyPath: nil, cacheName: nil)
 		self.reminderFetchResults.delegate = self //This belongs here because the tableView will manage the reminders, not the mapViewController (which will make them).
-
 	}
+	
+	@IBAction func resortReminders(sender: AnyObject) {
+		println("Resort enacted!")
+		
+		var resortActionSheet = UIAlertController(title: "Sort By", message: "This helps you organize your reminders", preferredStyle: UIAlertControllerStyle.ActionSheet)
+		prepareResortController(resortActionSheet)
+		
+		if resortActionSheet.popoverPresentationController != nil {
+			resortActionSheet.popoverPresentationController.barButtonItem = sender as UIBarButtonItem
+		}
+		
+		self.presentViewController(resortActionSheet, animated: true) {
+			() -> Void in
+			self.requestReminders()
+			self.reminderFetchResults.performFetch(nil) //Would this be performant?
+			self.reminderTableView.reloadData()
+		}
+	}
+	func prepareResortController(actionSheet: UIAlertController) {
+		let selectAlphabetical = UIAlertAction(title: "Normal", style: UIAlertActionStyle.Default) {
+			(action) -> Void in
+			self.sortKey = "message"
+		}
+		
+		let selectLatitude = UIAlertAction(title: "Latitude", style: UIAlertActionStyle.Default) {
+			(action) -> Void in
+			self.sortKey = "latitude"
+		}
+		
+		let selectLongitude = UIAlertAction(title: "Longitude", style: UIAlertActionStyle.Default) {
+			(action) -> Void in
+			self.sortKey = "longitude"
+		}
+		
+		let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+		
+		actionSheet.addAction(selectAlphabetical)
+		actionSheet.addAction(selectLatitude)
+		actionSheet.addAction(selectLongitude)
+		actionSheet.addAction(cancel)
+	}
+	
 //MARK: - Delegates
 //MARK: NSFetchedResults
 	func controllerWillChangeContent(controller: NSFetchedResultsController!) {
@@ -82,34 +129,7 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 			println("Edit button tapped.")
 			
 			var editAlert = UIAlertController(title: "Edit", message: "Edit here:", preferredStyle: UIAlertControllerStyle.Alert)
-			editAlert.addTextFieldWithConfigurationHandler({
-				(textField: UITextField!) -> Void in
-				if let reminder = self.reminderFetchResults.fetchedObjects[indexPath.row] as? Reminder {
-					textField.text = reminder.message
-					
-				}
-			})
-			
-			let done = UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: {
-				(action) -> Void in
-				if let reminder = self.reminderFetchResults.fetchedObjects[indexPath.row] as? Reminder {
-					if let textField = editAlert.textFields.first as? UITextField {
-						reminder.message = textField.text
-					}
-					
-					var error : NSError?
-					self.reminderContext.save(&error)
-					if error != nil {
-						println(error)
-					}
-				}
-				self.dismissViewControllerAnimated(true, completion: nil)
-			})
-			
-			let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
-			
-			editAlert.addAction(done)
-			editAlert.addAction(cancel)
+			self.prepareEditAlertController(editAlert, indexPath: indexPath)
 			self.presentViewController(editAlert, animated: true, completion: nil)
 			
 		}
@@ -119,6 +139,37 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 	}
 	func tableView(tableView: UITableView!, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath!) {
 		//Nothing needed
+	}
+
+	func prepareEditAlertController(controller: UIAlertController, indexPath: NSIndexPath) {
+		controller.addTextFieldWithConfigurationHandler({
+			(textField: UITextField!) -> Void in
+			if let reminder = self.reminderFetchResults.fetchedObjects[indexPath.row] as? Reminder {
+				textField.text = reminder.message
+				
+			}
+		})
+		
+		let done = UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: {
+			(action) -> Void in
+			if let reminder = self.reminderFetchResults.fetchedObjects[indexPath.row] as? Reminder {
+				if let textField = controller.textFields.first as? UITextField {
+					reminder.message = textField.text
+				}
+				
+				var error : NSError?
+				self.reminderContext.save(&error)
+				if error != nil {
+					println(error)
+				}
+			}
+			self.dismissViewControllerAnimated(true, completion: nil)
+		})
+		
+		let cancel = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+		
+		controller.addAction(done)
+		controller.addAction(cancel)
 	}
 //MARK: TableViewDataSource
 	func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {

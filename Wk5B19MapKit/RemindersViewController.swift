@@ -23,7 +23,6 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 		//Setup CoreData
 		self.setupCoreData()
 
-		println(self.reminderFetchResults.sections)
     }
 	
 	override func viewWillAppear(animated: Bool) {
@@ -53,8 +52,7 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 	}
 	
 	@IBAction func resortReminders(sender: AnyObject) {
-		println("Resort enacted!")
-		
+		//println("Resort enacted!")
 		var resortActionSheet = UIAlertController(title: "Sort By", message: "This helps you organize your reminders", preferredStyle: UIAlertControllerStyle.ActionSheet)
 		prepareResortController(resortActionSheet)
 		
@@ -66,7 +64,6 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 			() -> Void in
 			self.requestReminders()
 			self.reminderFetchResults.performFetch(nil) //Would this be performant?
-			self.reminderTableView.reloadData()
 		}
 	}
 	func prepareResortController(actionSheet: UIAlertController) {
@@ -96,9 +93,11 @@ class RemindersViewController: UIViewController, NSFetchedResultsControllerDeleg
 //MARK: - Delegates
 //MARK: NSFetchedResults
 	func controllerWillChangeContent(controller: NSFetchedResultsController!) {
+		println("Content will change")
 		self.reminderTableView.beginUpdates()
 	}
 	func controllerDidChangeContent(controller: NSFetchedResultsController!) {
+		println("Content changed")
 		self.reminderTableView.endUpdates()
 	}
 	func controller(controller: NSFetchedResultsController!, didChangeObject anObject: AnyObject!, atIndexPath indexPath: NSIndexPath!, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath!) {

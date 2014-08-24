@@ -20,6 +20,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	var reminderContext : NSManagedObjectContext!
 
 	var locationManager = CLLocationManager()
+	
+	var locationPins : MKPinAnnotationView!
 	var reminders = [Reminder]()
 	
 //MARK: - View methods
@@ -33,7 +35,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		var appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
 		self.reminderContext = appDelegate.managedObjectContext
 		
-		
 		//To execute a fetchRequest.
 		//var fetch = NSFetchRequest(entityName: "Reminder")
 		//var reminders = self.reminderContext.executeFetchRequest(fetch, error: nil)
@@ -45,10 +46,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	override func viewDidAppear(animated: Bool) {
 		self.locationManager.startUpdatingLocation()
-		self.locationManager.stopMonitoringSignificantLocationChanges()
+		self.locationManager.startMonitoringSignificantLocationChanges()
+		
+		if self.reminderContext != nil {
+			addRemindersToMapView()
+		}
+
 	}
 	override func viewWillDisappear(animated: Bool) {
 		self.locationManager.stopUpdatingLocation()
+		self.locationManager.stopMonitoringSignificantLocationChanges()
+
 	}
 	
 //MARK: RemindersTableView
@@ -64,7 +72,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 //MARK: - CoreData
-
 	func addReminder(coordinate : CLLocationCoordinate2D) {
 		var reminder = NSEntityDescription.insertNewObjectForEntityForName("Reminder", inManagedObjectContext: self.reminderContext) as Reminder
 		reminder.latitude = coordinate.latitude
@@ -82,6 +89,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		//println(reminder.message)
 	}
 
+	func addRemindersToMapView() {
+		var fetch = NSFetchRequest(entityName: "Reminder")
+		var reminders = self.reminderContext.executeFetchRequest(fetch, error: nil)
+		
+		for reminder in reminders {
+			if let theReminder = reminder as? Reminder {
+				var coordinate = CLLocationCoordinate2D(latitude: theReminder.latitude, longitude: theReminder.longitude)
+				var annotation = MKPointAnnotation()
+				annotation.coordinate = coordinate
+				annotation.title = theReminder.message
+				
+				self.mapView.addAnnotation(annotation)
+
+			}
+		}
+	}
+	
 //MARK: - Pin Methods
 	@IBAction func placePin(sender: AnyObject) {
 		var latitude = self.latitudeTextField.text as NSString
@@ -114,8 +138,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		self.mapView.addAnnotation(annotation)
 	}
 //MARK: - Delegates
-//MARK: NSFetchedResultsControllerDelegate
-	
 //MARK: CLLocationManagerDelegate
 	func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		switch status {
@@ -146,40 +168,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	
 //MARK: MKMapViewDelegate
-	//func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
-	//refactor into a subroutine.
+	func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+		//refactor into a subroutine.
+		if let selectedAnnotation = annotation as? MKUserLocation {
+			return nil
+		}
 		
-	//	if let selectedAnnotation = annotation as? MKUserLocation {
-	//		return nil
-	//	}
-	//		var annotationView = MKAnnotationView()
-	//		if let annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin") as? MKPinAnnotationView {
-	//
-	//		} else {
-	//
-	//		}
-	//
-	//		if annotationView == nil {
-	//			annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "Pin") //ReuseID set here not on SB
-	//
-	//		}
-	//		annotationView.animatesDrop = true
-	//		annotationView.canShowCallout = true
-	
-	//		var rButton = UIButton.buttonWithType(UIButtonType.ContactAdd) as UIButton
-	//		annotationView.rightCalloutAccessoryView = rButton
-	
-	//		return annotationView
+		if !self.locationPins {
+			self.locationPins = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "Pin")
+			self.locationPins.pinColor = MKPinAnnotationColor.Red
+			self.locationPins.animatesDrop = true
+			self.locationPins.canShowCallout = true
+		} else {
+			self.locationPins.annotation = annotation
+			return self.locationPins
+		}
 		
-	//	return nil
-	//}
+		return nil
+	}
 	
 	//For the accessories on the pins.
 	//func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
-		//		var annotation = view.annotation
-		//		annotation.coordinate
-		
-		
+	//		var annotation = view.annotation
+	//		annotation.coordinate
 	//}
-
 }

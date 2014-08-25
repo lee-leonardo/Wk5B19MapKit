@@ -9,8 +9,9 @@
 import UIKit
 import CoreData
 import MapKit
+import CoreBluetooth
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, CBPeripheralManagerDelegate, UIGestureRecognizerDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var latitudeTextField: UITextField!
@@ -18,12 +19,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	
 	//CoreData
 	var reminderContext : NSManagedObjectContext!
-
 	var locationManager = CLLocationManager()
+	var peripheralManager : CBPeripheralManager!
 	
 	var locationPins : MKPinAnnotationView!
-	var reminders = [Reminder]()
-	
+	var reminders = [MKAnnotation]()
+
+	//Bluetooth
+	let elevatorUUID = NSUUID(UUIDString: "DF460DF8-B6DF-4F6C-BF13-CB46D98B8578")
+	let deviceIdentifier = "com.codefellows.beacons.elevator"
+	var elevatorBeacon : CLBeaconRegion!
+	var elevatorBeaconData : NSMutableDictionary!
+
 //MARK: - View methods
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -34,6 +41,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		//Context setup
 		var appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
 		self.reminderContext = appDelegate.managedObjectContext
+		
+		//CoreBluetooth
+		self.elevatorBeacon = CLBeaconRegion(proximityUUID: self.elevatorUUID, identifier: self.deviceIdentifier)
+		self.elevatorBeaconData = self.elevatorBeacon.peripheralDataWithMeasuredPower(nil)
+		self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
 		
 		//To execute a fetchRequest.
 		//var fetch = NSFetchRequest(entityName: "Reminder")
@@ -47,15 +59,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	override func viewDidAppear(animated: Bool) {
 		self.locationManager.startUpdatingLocation()
 		self.locationManager.startMonitoringSignificantLocationChanges()
+		self.locationManager.startRangingBeaconsInRegion(self.elevatorBeacon)
 		
 		if self.reminderContext != nil {
-			addRemindersToMapView()
+			checkRemindersForMapView()
 		}
 
 	}
 	override func viewWillDisappear(animated: Bool) {
 		self.locationManager.stopUpdatingLocation()
 		self.locationManager.stopMonitoringSignificantLocationChanges()
+		self.locationManager.stopMonitoringForRegion(self.elevatorBeacon)
 
 	}
 	
@@ -89,9 +103,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		//println(reminder.message)
 	}
 
-	func addRemindersToMapView() {
+	func checkRemindersForMapView() {
 		var fetch = NSFetchRequest(entityName: "Reminder")
 		var reminders = self.reminderContext.executeFetchRequest(fetch, error: nil)
+		var reminderList = [MKAnnotation]()
 		
 		for reminder in reminders {
 			if let theReminder = reminder as? Reminder {
@@ -100,10 +115,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 				annotation.coordinate = coordinate
 				annotation.title = theReminder.message
 				
-				self.mapView.addAnnotation(annotation)
-
+				reminderList.append(annotation)
 			}
 		}
+		
+		self.reminders = reminderList
+		self.mapView.addAnnotations(reminders)
 	}
 	
 //MARK: - Pin Methods
@@ -138,6 +155,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 		self.mapView.addAnnotation(annotation)
 	}
 //MARK: - Delegates
+	//MARK: CBPeripheralManagerDelegate
+	func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager!) {
+		var state = peripheral.state
+		switch state {
+		case .PoweredOn:
+			self.peripheralManager.startAdvertising(elevatorBeaconData)
+		case .PoweredOff:
+			self.peripheralManager.stopAdvertising()
+		default:
+			println("Um")
+		}
+	}
+	
 //MARK: CLLocationManagerDelegate
 	func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		switch status {
@@ -157,6 +187,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
 		println("Did enter")
 		
+		if region == self.elevatorBeacon {
+			var notification = UILocalNotification()
+			notification.alertBody = "Near the region!"
+			notification.alertAction = "What would I put here?"
+		}
+		
 		//Put a local notification here.
 		//var notification = UILocalNotification()
 		//notification.alertBody = "Entered a region!"
@@ -165,6 +201,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 	}
 	func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
 		println("Did leave")
+		//I would copy the didEnterRegion logic to implement.
 	}
 	
 //MARK: MKMapViewDelegate

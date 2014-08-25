@@ -17,6 +17,7 @@
 		384E39A019A6F2DB00E357D0 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384E399F19A6F2DB00E357D0 /* MapKit.framework */; };
 		384E39A219A6F4BA00E357D0 /* RemindersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384E39A119A6F4BA00E357D0 /* RemindersViewController.swift */; };
 		384E39AE19A7A9D200E357D0 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384E39AD19A7A9D200E357D0 /* Reminder.swift */; };
+		3854FF2319AB046E0016CD5D /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3854FF2219AB046E0016CD5D /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		384E399F19A6F2DB00E357D0 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		384E39A119A6F4BA00E357D0 /* RemindersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemindersViewController.swift; sourceTree = "<group>"; };
 		384E39AD19A7A9D200E357D0 /* Reminder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
+		3854FF2219AB046E0016CD5D /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3854FF2319AB046E0016CD5D /* CoreBluetooth.framework in Frameworks */,
 				384E39A019A6F2DB00E357D0 /* MapKit.framework in Frameworks */,
 				384E399E19A6F2D400E357D0 /* CoreData.framework in Frameworks */,
 			);
@@ -70,6 +73,7 @@
 		384E396919A6F19F00E357D0 = {
 			isa = PBXGroup;
 			children = (
+				3854FF2219AB046E0016CD5D /* CoreBluetooth.framework */,
 				384E399F19A6F2DB00E357D0 /* MapKit.framework */,
 				384E399D19A6F2D400E357D0 /* CoreData.framework */,
 				384E397419A6F19F00E357D0 /* Wk5B19MapKit */,
